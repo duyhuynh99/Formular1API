@@ -6,10 +6,18 @@ Công nghệ sử dụng: ExpressTs, PrismaORM, Sqlite
    ```sh
    npm install
    ```
+   hoặc
+    ```sh
+   yarn install
+   ```
 - 2.Chạy lệnh để start server:
   
     ```sh
    npm run start:dev
+   ```
+   hoặc
+   ```sh
+   yarn run start:dev
    ```
 
 - 3.Chạy lệnh dưới đây để start prisma Studio để xem dữ liệu trực quan hơn:
