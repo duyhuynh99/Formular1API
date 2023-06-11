@@ -8,7 +8,7 @@ Hướng dẫn sử dụng
 
 3.Chạy lệnh npx prisma studio để start prismaStudio để xem dữ liệu trực quan hơn
 
-Database được dùng là SQL lite và được chạy ở thư mục prisma với tên devbit.db
+Database được dùng là SQLite và được chạy ở thư mục prisma với tên devbit.db
 
 Api chạy ở Port:4444
 
