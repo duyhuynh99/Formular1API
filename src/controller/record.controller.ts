@@ -7,6 +7,7 @@ export const recordController = {
     async createRecord(req: Request, res: Response) {
 
         const data = req.body;
+        console.log('Run data Round: '+data.round);
         const raceName: string = data.Circuit.Location.country;
         //Tạo đường đua
         let dataRace;
@@ -25,7 +26,6 @@ export const recordController = {
             })
             dataRace = race;
         }
-        console.log(data.Results);
         for (const item of data.Results) {
             let dataDriver;
             const driver = await prisma.driver.findFirst({
@@ -81,6 +81,7 @@ export const recordController = {
                 console.log('Fail-------------------');
             }
         }
+        console.log('------------------success----------------')
         return res.send('success');
     },
 
