@@ -6,14 +6,11 @@ const routes=Router();
 //Lấy tất cả dữ liệu trong 1 năm và lấy ra bao nhiêu record
 routes.get("/year/:year/size/:size",recordController.findRecordAllInYear);
 
-
 //Lấy dữ liệu top1 của các đường đua trong năm
 routes.get("/year/:year/race-all",recordController.findRecordTopRaceInYear);
 
 //Lấy dữ liệu đua của 1 đường đua trong năm
 routes.get("/year/:year/race/:raceId",recordController.findRecordRaceInYear);
-
-
 
 //Lấy dữ liệu xếp hạng của các tay đua trong năm
 routes.get("/year/:year/driver-all",recordController.findRecordTopDriverInYear);
