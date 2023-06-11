@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,39 +7,39 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Driver{
-  id Int @id @default(autoincrement())
-  driveName String
-  nation String
-  record Record[]
+model Driver {
+  id         Int      @id @default(autoincrement())
+  driverName String
+  nation     String
+  record     Record[]
 }
 
-model Team{
-  id Int @id @default(autoincrement())
-  teamName String @unique
-  record Record[]
+model Team {
+  id       Int      @id @default(autoincrement())
+  teamName String   @unique
+  record   Record[]
 }
 
-model Race{
-  id Int @id @default(autoincrement())
-  raceName String 
-  revenue String @unique
-  timeStart DateTime
-  timeEnd DateTime
-  record Record[]
+model Race {
+  id       Int      @id @default(autoincrement())
+  raceName String
+  revenue  String   @unique
+  record   Record[]
 }
 
-model Record{
-  id Int @id @default(autoincrement())
-  year DateTime
-  date DateTime
-  lap Int
-  timeRetired String
-  point Int
-  driverId Int
-  driver Driver @relation(fields: [driverId],references: [id])
-  teamId Int
-  team Team @relation(fields: [teamId],references: [id])
-  raceId Int
-  race Race @relation(fields: [raceId],references: [id])
+model Record {
+  id             Int    @id @default(autoincrement())
+  year           String
+  lap            Int
+  timeRetired    String
+  point          Int
+  positions      Int
+  fastestLapRank Int
+  fastestLapTime String
+  driverId       Int
+  teamId         Int
+  raceId         Int
+  race           Race   @relation(fields: [raceId], references: [id])
+  team           Team   @relation(fields: [teamId], references: [id])
+  driver         Driver @relation(fields: [driverId], references: [id])
 }
