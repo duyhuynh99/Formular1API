@@ -1,9 +1,10 @@
+
 # Formular1API Hướng dẫn sử dụng
-- 1.Chạy lệnh npm install để install các package cần thiết
+- 1.Chạy lệnh ```npm install``` để install các package cần thiết
 
-- 2.Chạy lệnh npm run start:dev để start server
+- 2.Chạy lệnh ```npm run start:dev```  để start server
 
-- 3.Chạy lệnh npx prisma studio để start prismaStudio để xem dữ liệu trực quan hơn
+- 3.Chạy lệnh ```npx prisma studio``` để start prismaStudio để xem dữ liệu trực quan hơn
 # Lưu ý
 Database được dùng là SQLite và được chạy ở thư mục prisma với tên devbit.db.Dữ liệu được lấy thông qua các API https://ergast.com/api/f1  nên dữ liệu sẽ có sự sai sót một số nơi
 
