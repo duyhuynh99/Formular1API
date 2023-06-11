@@ -86,7 +86,9 @@ export const recordController = {
 
     async findRecordAllInYear(req: Request, res: Response) {
 
-        const { year, size } = req.params;
+        const { year } = req.params;
+        const { size } = req.query;
+        const sizeDefault: number = 25;
         const record = await prisma.record.findMany({
             where: {
                 year: year,
@@ -95,7 +97,7 @@ export const recordController = {
                 { raceId: 'asc' },
                 { point: 'desc' },
             ],
-            take: Number(size),
+            take: size ? Number(size) : sizeDefault,
             include: {
                 driver: true,
                 team: true,
@@ -113,17 +115,31 @@ export const recordController = {
             where: {
                 AND: [
                     { year: year },
-                    { positions: Number(1) },
+                    { positions: 1 },
                 ],
             },
             orderBy: {
                 raceId: 'asc'
             },
-            include: {
-                driver: true,
-                team: true,
-                race: true
-            }
+            select: {
+                lap: true,
+                timeRetired: true,
+                driver: {
+                    select: {
+                        driverName: true,
+                    },
+                },
+                team: {
+                    select: {
+                        teamName: true,
+                    },
+                },
+                race: {
+                    select: {
+                        raceName: true,
+                    },
+                },
+            },
         });
 
         return res.json(record);
@@ -142,16 +158,33 @@ export const recordController = {
             orderBy: {
                 point: 'desc'
             },
-            include: {
-                driver: true,
-                team: true,
-                race: true
-            }
+            select: {
+                id: true,
+                positions: true,
+                lap: true,
+                timeRetired: true,
+                point: true,
+                driver: {
+                    select: {
+                        driverName: true,
+                    },
+                },
+                team: {
+                    select: {
+                        teamName: true,
+                    },
+                },
+                race: {
+                    select: {
+                        raceName: true,
+                    },
+                },
+            },
         });
 
         return res.json(record);
     },
-
+    //tương tự như selection year/driver/all trên trang F1
     async findRecordTopDriverInYear(req: Request, res: Response) {
 
         const year = req.params.year;
@@ -223,7 +256,7 @@ export const recordController = {
 
         return res.json(record);
     },
-
+    //tương tự như selection year/team/all trên trang F1
     async findRecordTopTeamInYear(req: Request, res: Response) {
 
         const year = req.params.year;
@@ -243,8 +276,8 @@ export const recordController = {
 
         interface Item {
             [key: string]: {
-                totalPoint: number;
                 teamName: string;
+                totalPoint: number;
             };
         }
 
@@ -255,8 +288,8 @@ export const recordController = {
 
             if (!item[teamId]) {
                 item[teamId] = {
-                    totalPoint: 0,
                     teamName: e.team.teamName,
+                    totalPoint: 0,
                 };
             }
 
@@ -290,8 +323,8 @@ export const recordController = {
 
         interface Item {
             [key: string]: {
-                totalPoint: number;
                 raceName: string;
+                totalPoint: number;
             };
         }
 
@@ -302,8 +335,8 @@ export const recordController = {
 
             if (!item[raceId]) {
                 item[raceId] = {
-                    totalPoint: 0,
                     raceName: e.race.raceName,
+                    totalPoint: 0,
                 };
             }
 
@@ -314,7 +347,7 @@ export const recordController = {
 
         return res.json(finallyRecord);
     },
-
+    //Tìm kiếm fastestLap như trang F1
     async findFastestLapInYear(req: Request, res: Response) {
 
         const { year } = req.params;
@@ -337,5 +370,170 @@ export const recordController = {
 
         return res.json(record);
     },
+
+    //optional
+    async findSingleDriverResult(req: Request, res: Response) {
+
+        const { year, raceId, driverId } = req.params;
+        const record = await prisma.record.findMany({
+            where: {
+                AND: [
+                    { year: year },
+                    { raceId: Number(raceId) },
+                    { driverId: Number(driverId) },
+                ],
+            },
+            include: {
+                driver: true,
+                team: true,
+                race: true
+            }
+        });
+
+        return res.json(record);
+    },
+
+    async findDriverRankYearByYear(req: Request, res: Response) {
+
+        const { driverId } = req.params;
+        const { yearStart, yearEnd } = req.query;
+        const yearStartDefault = 2022;
+        const yearEndDefault = 2023;
+
+        interface Result {
+            year: string;
+            positionInYear: number | string;
+        }
+
+
+        const array: Result[] = [];
+
+        for (let i = yearStart ? Number(yearStart) : yearStartDefault; i <= (yearEnd ? Number(yearEnd) : yearEndDefault); i++) {
+            const record = await prisma.record.findMany({
+                where: {
+                    year: i.toString(),
+                },
+                orderBy: {
+                    driverId: 'asc',
+                    // raceId: 'asc'
+                },
+                include: {
+                    driver: true,
+                    team: true,
+                    race: true
+                }
+            });
+
+            if (record.length) {
+
+                interface Item {
+                    [key: string]: {
+                        driverId:number,
+                        totalPoint: number,
+                        driverName: string,
+                        nation: string,
+                        teamName: string,
+                    };
+                }
+
+                const item: Item = {};
+
+                for (const e of record) {
+                    const driverId = e.driverId;
+
+                    if (!item[driverId]) {
+                        item[driverId] = {
+                            driverId: driverId,
+                            totalPoint: 0,
+                            teamName: e.team.teamName,
+                            nation: e.driver.nation,
+                            driverName: e.driver.driverName
+                        };
+                    }
+
+                    item[driverId].totalPoint += e.point;
+                }
+
+                const finallyRecord: any[] = Object.values(item).sort((a, b) => b.totalPoint - a.totalPoint);
+
+                const positionInYear = finallyRecord.findIndex(item => item.driverId === Number(driverId));
+
+                array.push({ year: i.toString(), positionInYear: positionInYear+1 });
+            } else {
+                array.push({ year: i.toString(), positionInYear: 'Không có dữ liệu' })
+            }
+        }
+
+        return res.json(array);
+    },
+
+    async findTeamRankYearByYear(req: Request, res: Response) {
+
+        const { teamId } = req.params;
+        const { yearStart, yearEnd } = req.query;
+        const yearStartDefault = 2022;
+        const yearEndDefault = 2023;
+
+        interface Result {
+            year: string;
+            positionTeamInYear: number | string;
+        }
+
+
+        const array: Result[] = [];
+
+        for (let i = yearStart ? Number(yearStart) : yearStartDefault; i <= (yearEnd ? Number(yearEnd) : yearEndDefault); i++) {
+            const record = await prisma.record.findMany({
+                where: {
+                    year: i.toString(),
+                },
+                orderBy: {
+                    driverId: 'asc',
+                    // raceId: 'asc'
+                },
+                include: {
+                    team: true,
+                }
+            });
+
+            if (record.length) {
+
+                interface Item {
+                    [key: string]: {
+                        teamId:number;
+                        teamName: string;
+                        totalPoint: number;
+                    };
+                }
+        
+                const item: Item = {};
+        
+                for (const e of record) {
+                    const teamId = e.teamId;
+        
+                    if (!item[teamId]) {
+                        item[teamId] = {
+                            teamId: teamId,
+                            teamName: e.team.teamName,
+                            totalPoint: 0,
+                        };
+                    }
+        
+                    item[teamId].totalPoint += e.point;
+                }
+        
+                const finallyRecord: any[] = Object.values(item).sort((a, b) => b.totalPoint - a.totalPoint);
+
+                const positionTeamInYear = finallyRecord.findIndex(item => item.teamId === Number(teamId));
+
+                array.push({ year: i.toString(), positionTeamInYear: positionTeamInYear+1 });
+            } else {
+                array.push({ year: i.toString(), positionTeamInYear: 'Không có dữ liệu' })
+            }
+        }
+
+        return res.json(array);
+    },
+
 
 }
