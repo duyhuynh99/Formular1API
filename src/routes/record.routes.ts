@@ -32,10 +32,10 @@ routes.get("/fastest-lap/year/:year/",recordController.findFastestLapInYear);
 //Lấy dữ liệu của 1 driver trong cuộc đua
 routes.get("/year/:year/race/:raceId/driver/:driverId",recordController.findSingleDriverResult);
 
-//Thức hạng driver qua từng năm
+//Thức hạng driver qua từng năm ?yearStart=2020&yearEnd=2023 là 2 params
 routes.get("/driver-rank-year-by-year/driver/:driverId/",recordController.findDriverRankYearByYear);
 
-//Thức hạng Team qua từng năm
+//Thức hạng Team qua từng năm ?yearStart=2020&yearEnd=2023 là 2 params
 routes.get("/team-rank-year-by-year/team/:teamId/",recordController.findTeamRankYearByYear);
 
 //API này để đẩy dữ liệu bao gồm driver ,team, race từ API:https://ergast.com/api/f1/
