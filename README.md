@@ -1,7 +1,4 @@
-# Formular1API
-
-# Hướng dẫn sử dụng
-
+# Formular1API Hướng dẫn sử dụng
 - 1.Chạy lệnh npm install để install các package cần thiết
 
 - 2.Chạy lệnh npm run start:dev để start server
