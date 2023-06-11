@@ -1,6 +1,8 @@
 # Formular1API
 Chạy lệnh npm run start:dev để start server
+
 Database được dùng là SQL lite và được chạy ở thư mục prisma với tên devbit.db
+
 Api chạy ở Port:4444
 
 TestApi: http://localhost:4444/api/record
