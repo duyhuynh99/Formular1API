@@ -2,7 +2,7 @@
 # Formular1API Hướng dẫn sử dụng
 Công nghệ sử dụng: Express, TypeScript, PrismaORM, Sqlite.
 
-Data được collect từ năm 2016->2023 .
+Data được collect từ năm 2015->2023 .
 
 - 1.Chạy lệnh dưới đây để install các package cần thiết:
    ```sh
