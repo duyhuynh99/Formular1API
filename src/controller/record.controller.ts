@@ -7,7 +7,7 @@ export const recordController = {
     async createRecord(req: Request, res: Response) {
 
         const data = req.body;
-        console.log('Run data Round: '+data.round);
+        console.log('Run data Round: '+data.round+' '+data.raceName);
         const raceName: string = data.Circuit.Location.country;
         //Tạo đường đua
         let dataRace;
